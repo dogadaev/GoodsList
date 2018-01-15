@@ -1,7 +1,6 @@
 package com.quaindinteractive.goodslist.view;
 
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -10,6 +9,7 @@ import android.widget.TextView;
 
 import com.quaindinteractive.goodslist.R;
 import com.quaindinteractive.goodslist.model.retrofit.Item;
+import com.quaindinteractive.goodslist.presenter.implementation.GoodsPresenterImpl;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -19,7 +19,12 @@ import butterknife.ButterKnife;
 
 public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ProductHolder> {
 
-    List<Item> data = new ArrayList<>();
+    private static GoodsView view;
+    private List<Item> data = new ArrayList<>();
+
+    public ProductAdapter(GoodsView view) {
+        this.view = view;
+    }
 
     @Override
     public ProductAdapter.ProductHolder onCreateViewHolder(ViewGroup parent, int viewType) {
@@ -45,8 +50,10 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ProductH
 
     static class ProductHolder extends RecyclerView.ViewHolder {
 
-        @BindView(R.id.product) TextView text;
-        @BindView(R.id.edit_filed_button) ImageButton editButton;
+        @BindView(R.id.product)
+        TextView text;
+        @BindView(R.id.edit_filed_button)
+        ImageButton editButton;
 
         public ProductHolder(View itemView) {
             super(itemView);
@@ -59,7 +66,12 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ProductH
             editButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    Log.i("RecyclerView", "id=" + item.getId());
+                    view.onEditClicked(item.getId(), item.getName(), item.getPrice(), new GoodsPresenterImpl.FieldEditedCallback() {
+                        @Override
+                        public void onComplete(String newName, float newPrice) {
+                            text.setText(String.format("ID: %s, НАЗВАНИЕ: '%s', ЦЕНА: %s", item.getId(), newName, newPrice));
+                        }
+                    });
                 }
             });
         }

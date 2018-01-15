@@ -3,7 +3,7 @@ package com.quaindinteractive.goodslist.dagger.module;
 import android.content.Context;
 
 import com.quaindinteractive.goodslist.dagger.DaggerApplication;
-import com.quaindinteractive.goodslist.model.ProductsModel;
+import com.quaindinteractive.goodslist.model.ProductModel;
 import com.quaindinteractive.goodslist.model.database.DatabaseHelper;
 import com.quaindinteractive.goodslist.presenter.GoodsPresenter;
 import com.quaindinteractive.goodslist.presenter.MainPresenter;
@@ -24,13 +24,14 @@ public class ApplicationModule {
         this.daggerApplication = daggerApplication;
     }
 
-    @Provides MainPresenter provideMainPresenter(MainView view, ProductsModel model) { return new MainPresenterImpl(view, model); }
-    @Provides GoodsPresenter provideGoodsPresenter(GoodsView view, ProductsModel model) { return new GoodsPresenterImpl(view, model); }
+    @Provides MainPresenter provideMainPresenter(MainView view, ProductModel model) { return new MainPresenterImpl(view, model); }
+    @Provides GoodsPresenter provideGoodsPresenter(GoodsView view, ProductModel model) { return new GoodsPresenterImpl(view, model); }
 
     @Provides MainView provideMainView() { return (MainView) daggerApplication.getView(); }
     @Provides GoodsView provideGoodsView() { return (GoodsView) daggerApplication.getView();}
 
-    @Provides ProductsModel provideUserModel(DatabaseHelper databaseHelper) { return new ProductsModel(databaseHelper); }
+    @Provides
+    ProductModel provideUserModel(DatabaseHelper databaseHelper) { return new ProductModel(databaseHelper); }
     @Provides DatabaseHelper provideDatabaseHelper(Context context) { return new DatabaseHelper(context); }
 
     @Provides Context provideContext() { return  daggerApplication; }

@@ -12,11 +12,11 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
-public class ProductsModel {
+public class ProductModel {
 
     private static DatabaseHelper databaseHelper;
 
-    public ProductsModel(DatabaseHelper databaseHelper) {
+    public ProductModel(DatabaseHelper databaseHelper) {
         this.databaseHelper = databaseHelper;
     }
 
@@ -32,7 +32,13 @@ public class ProductsModel {
 
     public void clearProducts(ClearProductsCallback clearProductsCallback) {
         ClearProductsTask clearProductsTask = new ClearProductsTask(clearProductsCallback);
+        clearProductsTask.execute();
 
+    }
+
+    public void updateProduct(ContentValues fieldsContentValues, ContentValues idContentValues, UpdateProductCallback updateProductCallback) {
+        UpdateProductTask updateProductTask = new UpdateProductTask(updateProductCallback);
+        updateProductTask.execute(fieldsContentValues, idContentValues);
     }
 
     public interface LoadProductsCallback {
@@ -44,6 +50,10 @@ public class ProductsModel {
     }
 
     public interface ClearProductsCallback {
+        void onComplete();
+    }
+
+    public interface UpdateProductCallback {
         void onComplete();
     }
 
@@ -119,6 +129,31 @@ public class ProductsModel {
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(Void aVoid) {
+            super.onPostExecute(aVoid);
+            if (callback != null) {
+                callback.onComplete();
+            }
+        }
+    }
+
+    static class UpdateProductTask extends AsyncTask<ContentValues, Void, Void> {
+
+        private final UpdateProductCallback callback;
+
+        UpdateProductTask(UpdateProductCallback callback) {
+            this.callback = callback;
+        }
+
+        @Override
+        protected Void doInBackground(ContentValues... params) {
+            ContentValues cvUser = params[0];
+            int id = params[1].getAsInteger(ProductsTable.COLUMN.ID);
+            databaseHelper.getWritableDatabase().update(ProductsTable.TABLE, cvUser, ProductsTable.COLUMN.ID +"="+id, null);
             return null;
         }
 

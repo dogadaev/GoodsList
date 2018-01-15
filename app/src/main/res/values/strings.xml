@@ -5,4 +5,6 @@
     <string name="no_internet_title">Внимание</string>
     <string name="no_internet_message">Отсутствует подключение к интернету, проверьте подключение и попробуйте снова.</string>
     <string name="error_title">Ошибка</string>
+    <string name="edit_name_hint">Введите новое название</string>
+    <string name="edit_price_hint">Введите новую цену</string>
 </resources>

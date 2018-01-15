@@ -5,13 +5,11 @@ import android.content.Context;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.support.annotation.NonNull;
-import android.util.Log;
 
 import com.quaindinteractive.goodslist.R;
-import com.quaindinteractive.goodslist.model.ProductsModel;
+import com.quaindinteractive.goodslist.model.ProductModel;
 import com.quaindinteractive.goodslist.model.database.ProductsTable;
 import com.quaindinteractive.goodslist.model.retrofit.Item;
-import com.quaindinteractive.goodslist.model.retrofit.ItemsList;
 import com.quaindinteractive.goodslist.model.retrofit.MessagesApi;
 import com.quaindinteractive.goodslist.model.retrofit.XmlList;
 import com.quaindinteractive.goodslist.presenter.MainPresenter;
@@ -31,15 +29,15 @@ import static com.quaindinteractive.goodslist.util.Config.BASE_URL;
 public class MainPresenterImpl implements MainPresenter {
 
     private MainView view;
-    private ProductsModel productsModel;
+    private ProductModel productModel;
 
     private boolean areGoodsLoaded = false;
 
-    public MainPresenterImpl(MainView view, ProductsModel productsModel) {
+    public MainPresenterImpl(MainView view, ProductModel productModel) {
         this.view = view;
-        this.productsModel = productsModel;
+        this.productModel = productModel;
 
-        productsModel.loadProducts(new ProductsModel.LoadProductsCallback() {
+        productModel.loadProducts(new ProductModel.LoadProductsCallback() {
             @Override
             public void onLoad(List<Item> products) {
                 if (products.isEmpty()) {
@@ -78,7 +76,7 @@ public class MainPresenterImpl implements MainPresenter {
                                 values.put(ProductsTable.COLUMN.NAME, item.getName());
                                 values.put(ProductsTable.COLUMN.PRICE, item.getPrice());
 
-                                productsModel.addProduct(values, new ProductsModel.AddProductCallback() {
+                                productModel.addProduct(values, new ProductModel.AddProductCallback() {
                                     @Override
                                     public void onComplete() {
                                     }
