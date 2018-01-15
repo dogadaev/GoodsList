@@ -22,7 +22,6 @@ public class GoodsPresenterImpl implements GoodsPresenter {
             @Override
             public void onLoad(List<Item> products) {
 
-//                Log.i("GoodsPresenter", products.isEmpty() + "");
                 view.showGoods(products);
             }
         });

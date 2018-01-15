@@ -4,5 +4,6 @@
     <color name="colorPrimaryDark">#101010</color>
     <color name="colorAccent">#000000</color>
     <color name="veryDarkGrey">#292929</color>
+    <color name="notReallyDarkGrey">#333333</color>
     <color name="background">#dedede</color>
 </resources>

@@ -5,6 +5,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageButton;
 import android.widget.TextView;
 
 import com.quaindinteractive.goodslist.R;
@@ -45,15 +46,22 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ProductH
     static class ProductHolder extends RecyclerView.ViewHolder {
 
         @BindView(R.id.product) TextView text;
+        @BindView(R.id.edit_filed_button) ImageButton editButton;
 
         public ProductHolder(View itemView) {
             super(itemView);
             ButterKnife.bind(this, itemView);
         }
 
-        void bind(Item item) {
-            text.setText(String.format("id: %s, name: %s, price: %s", item.getId(), item.getName(), item.getPrice()));
+        void bind(final Item item) {
+            text.setText(String.format("ID: %s, НАЗВАНИЕ: '%s', ЦЕНА: %s", item.getId(), item.getName(), item.getPrice()));
+
+            editButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Log.i("RecyclerView", "id=" + item.getId());
+                }
+            });
         }
     }
-
 }

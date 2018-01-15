@@ -33,56 +33,76 @@ public class MainPresenterImpl implements MainPresenter {
     private MainView view;
     private ProductsModel productsModel;
 
+    private boolean areGoodsLoaded = false;
+
     public MainPresenterImpl(MainView view, ProductsModel productsModel) {
         this.view = view;
         this.productsModel = productsModel;
+
+        productsModel.loadProducts(new ProductsModel.LoadProductsCallback() {
+            @Override
+            public void onLoad(List<Item> products) {
+                if (products.isEmpty()) {
+                    MainPresenterImpl.this.view.enableDownloadButton();
+                    areGoodsLoaded = false;
+                } else {
+                    MainPresenterImpl.this.view.disableDownloadButton();
+                    areGoodsLoaded = true;
+                }
+            }
+        });
     }
 
     @Override
     public void onDownloadClicked() {
         if (isInternetConnected()) {
+            if (!areGoodsLoaded) {
+                view.showProgress();
+                Retrofit retrofit = new Retrofit.Builder().baseUrl(BASE_URL).addConverterFactory(SimpleXmlConverterFactory.create()).build();
 
-            Retrofit retrofit = new Retrofit.Builder().baseUrl(BASE_URL).addConverterFactory(SimpleXmlConverterFactory.create()).build();
+                MessagesApi messagesApi = retrofit.create(MessagesApi.class);
+                Call<XmlList> messages = messagesApi.messages();
 
-            MessagesApi messagesApi = retrofit.create(MessagesApi.class);
+                messages.enqueue(new Callback<XmlList>() {
+                    @Override
+                    public void onResponse(@NonNull Call<XmlList> call, @NonNull Response<XmlList> response) {
+                        if (response.isSuccessful()) {
 
-            Call<XmlList> messages = messagesApi.messages();
+                            List<Item> products = response.body().getProducts().get(0).getItemsList();
+                            final Iterator<Item> iterator = products.iterator();
 
-            messages.enqueue(new Callback<XmlList>() {
-                @Override
-                public void onResponse(@NonNull Call<XmlList> call, @NonNull Response<XmlList> response) {
-                    if (response.isSuccessful()) {
+                            while (iterator.hasNext()) {
+                                ContentValues values = new ContentValues();
+                                final Item item = iterator.next();
+                                values.put(ProductsTable.COLUMN.ID, item.getId());
+                                values.put(ProductsTable.COLUMN.NAME, item.getName());
+                                values.put(ProductsTable.COLUMN.PRICE, item.getPrice());
 
-                        List<Item> products = response.body().getProducts().get(0).getItemsList();
-                        final Iterator<Item> iterator = products.iterator();
-
-                        while (iterator.hasNext()) {
-                            ContentValues values = new ContentValues();
-                            final Item item = iterator.next();
-                            values.put(ProductsTable.COLUMN.ID, item.getId());
-                            values.put(ProductsTable.COLUMN.NAME, item.getName());
-                            values.put(ProductsTable.COLUMN.PRICE, item.getPrice());
-
-                            productsModel.addProduct(values, new ProductsModel.AddProductCallback() {
-                                @Override
-                                public void onComplete() {
-                                    Log.i("DatabaseAdd", item.getId() + "");
-                                }
-                            });
+                                productsModel.addProduct(values, new ProductsModel.AddProductCallback() {
+                                    @Override
+                                    public void onComplete() {
+                                    }
+                                });
+                            }
+                            view.disableDownloadButton();
+                            view.hideProgress();
                         }
                     }
-                }
 
-                @Override
-                public void onFailure(@NonNull Call<XmlList> call, Throwable t) {
-                    try {
-                        view.showDialog(R.string.error_title, t.getMessage());
-                        throw t;
-                    } catch (Throwable throwable) {
-                        throwable.printStackTrace();
+                    @Override
+                    public void onFailure(@NonNull Call<XmlList> call, Throwable t) {
+                        try {
+                            view.hideProgress();
+                            view.showDialog(R.string.error_title, t.getMessage());
+                            throw t;
+                        } catch (Throwable throwable) {
+                            throwable.printStackTrace();
+                        }
                     }
-                }
-            });
+                });
+            } else {
+                view.disableDownloadButton();
+            }
 
         } else view.showDialog(R.string.no_internet_title, R.string.no_internet_message);
     }
