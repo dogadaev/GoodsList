@@ -4,7 +4,7 @@ import android.os.Bundle;
 
 import com.quaindinteractive.goodslist.R;
 
-public class GoodsAvtivity extends BaseActivity {
+public class GoodsActivity extends BaseActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

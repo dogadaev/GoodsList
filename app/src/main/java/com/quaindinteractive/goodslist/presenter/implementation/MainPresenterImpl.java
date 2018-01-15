@@ -3,10 +3,22 @@ package com.quaindinteractive.goodslist.presenter.implementation;
 import android.content.Context;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.support.annotation.NonNull;
 
 import com.quaindinteractive.goodslist.R;
+import com.quaindinteractive.goodslist.model.ItemsList;
+import com.quaindinteractive.goodslist.model.MessagesApi;
+import com.quaindinteractive.goodslist.model.XmlList;
 import com.quaindinteractive.goodslist.presenter.MainPresenter;
 import com.quaindinteractive.goodslist.view.MainView;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+import retrofit2.Retrofit;
+import retrofit2.converter.simplexml.SimpleXmlConverterFactory;
+
+import static com.quaindinteractive.goodslist.util.Config.BASE_URL;
 
 public class MainPresenterImpl implements MainPresenter {
 
@@ -19,6 +31,32 @@ public class MainPresenterImpl implements MainPresenter {
     @Override
     public void onDownloadClicked() {
         if (isInternetConnected()) {
+
+            Retrofit retrofit = new Retrofit.Builder().baseUrl(BASE_URL).addConverterFactory(SimpleXmlConverterFactory.create()).build();
+
+            MessagesApi messagesApi = retrofit.create(MessagesApi.class);
+
+            Call<XmlList> messages = messagesApi.messages();
+
+            messages.enqueue(new Callback<XmlList>() {
+                @Override
+                public void onResponse(@NonNull Call<XmlList> call, @NonNull Response<XmlList> response) {
+                    if (response.isSuccessful()) {
+                        ItemsList items = response.body().getProducts().get(0);
+                        System.out.println(items.getItemsList().size());
+                    }
+                }
+
+                @Override
+                public void onFailure(@NonNull Call<XmlList> call, Throwable t) {
+                    try {
+                        view.showDialog(R.string.error_title, t.getMessage());
+                        throw t;
+                    } catch (Throwable throwable) {
+                        throwable.printStackTrace();
+                    }
+                }
+            });
 
         } else view.showDialog(R.string.no_internet_title, R.string.no_internet_message);
     }

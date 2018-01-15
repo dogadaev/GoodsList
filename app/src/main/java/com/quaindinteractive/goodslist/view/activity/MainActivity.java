@@ -35,7 +35,7 @@ public class MainActivity extends BaseActivity implements MainView {
                 presenter.onDownloadClicked();
                 break;
             case R.id.show_goods_button:
-                Intent intent = new Intent(this, GoodsAvtivity.class);
+                Intent intent = new Intent(this, GoodsActivity.class);
                 startActivity(intent);
                 break;
             default:

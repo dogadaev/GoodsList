@@ -27,6 +27,18 @@ public abstract class BaseActivity extends AppCompatActivity implements BaseView
     }
 
     @Override
+    public void showDialog(int titleId, String message) {
+        final AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setMessage(message).setTitle(titleId).setPositiveButton("OK", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.cancel();
+            }
+        });
+        builder.create().show();
+    }
+
+    @Override
     public void showDialog(int titleId, int messageId) {
         final AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setMessage(messageId).setTitle(titleId).setPositiveButton("OK", new DialogInterface.OnClickListener() {
