@@ -1,5 +1,5 @@
 # Goods Listings
-For this project I used libraries such as <b>Dagger2</b>, <b>Retrofit</b> and <b>ButterKnife</b>. Such ViewGroups as <b>ConstraintLayout</b> and <b>RecyclerView</b>. Also i applied MVP design pattern.
+For this project I used libraries such as <b>Dagger2</b>, <b>Retrofit</b> and <b>ButterKnife</b>. ViewGroups such as <b>ConstraintLayout</b> and <b>RecyclerView</b>. Also i applied MVP design pattern.
 
 
 This application can:
