@@ -1,16 +1,24 @@
 package com.quaindinteractive.goodslist.presenter.implementation;
 
+import android.content.ContentValues;
 import android.content.Context;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.support.annotation.NonNull;
+import android.util.Log;
 
 import com.quaindinteractive.goodslist.R;
-import com.quaindinteractive.goodslist.model.ItemsList;
-import com.quaindinteractive.goodslist.model.MessagesApi;
-import com.quaindinteractive.goodslist.model.XmlList;
+import com.quaindinteractive.goodslist.model.ProductsModel;
+import com.quaindinteractive.goodslist.model.database.ProductsTable;
+import com.quaindinteractive.goodslist.model.retrofit.Item;
+import com.quaindinteractive.goodslist.model.retrofit.ItemsList;
+import com.quaindinteractive.goodslist.model.retrofit.MessagesApi;
+import com.quaindinteractive.goodslist.model.retrofit.XmlList;
 import com.quaindinteractive.goodslist.presenter.MainPresenter;
 import com.quaindinteractive.goodslist.view.MainView;
+
+import java.util.Iterator;
+import java.util.List;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -23,9 +31,11 @@ import static com.quaindinteractive.goodslist.util.Config.BASE_URL;
 public class MainPresenterImpl implements MainPresenter {
 
     private MainView view;
+    private ProductsModel productsModel;
 
-    public MainPresenterImpl(MainView view) {
+    public MainPresenterImpl(MainView view, ProductsModel productsModel) {
         this.view = view;
+        this.productsModel = productsModel;
     }
 
     @Override
@@ -42,8 +52,24 @@ public class MainPresenterImpl implements MainPresenter {
                 @Override
                 public void onResponse(@NonNull Call<XmlList> call, @NonNull Response<XmlList> response) {
                     if (response.isSuccessful()) {
-                        ItemsList items = response.body().getProducts().get(0);
-                        System.out.println(items.getItemsList().size());
+
+                        List<Item> products = response.body().getProducts().get(0).getItemsList();
+                        final Iterator<Item> iterator = products.iterator();
+
+                        while (iterator.hasNext()) {
+                            ContentValues values = new ContentValues();
+                            final Item item = iterator.next();
+                            values.put(ProductsTable.COLUMN.ID, item.getId());
+                            values.put(ProductsTable.COLUMN.NAME, item.getName());
+                            values.put(ProductsTable.COLUMN.PRICE, item.getPrice());
+
+                            productsModel.addProduct(values, new ProductsModel.AddProductCallback() {
+                                @Override
+                                public void onComplete() {
+                                    Log.i("DatabaseAdd", item.getId() + "");
+                                }
+                            });
+                        }
                     }
                 }
 

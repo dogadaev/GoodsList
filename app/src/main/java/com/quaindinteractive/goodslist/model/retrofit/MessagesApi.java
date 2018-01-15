@@ -1,4 +1,4 @@
-package com.quaindinteractive.goodslist.model;
+package com.quaindinteractive.goodslist.model.retrofit;
 
 import retrofit2.Call;
 import retrofit2.http.GET;

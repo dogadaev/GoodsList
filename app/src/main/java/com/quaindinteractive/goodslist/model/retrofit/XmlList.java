@@ -1,4 +1,4 @@
-package com.quaindinteractive.goodslist.model;
+package com.quaindinteractive.goodslist.model.retrofit;
 
 import org.simpleframework.xml.ElementList;
 import org.simpleframework.xml.Root;

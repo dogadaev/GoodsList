@@ -1,6 +1,7 @@
 package com.quaindinteractive.goodslist.dagger.component;
 
 import com.quaindinteractive.goodslist.dagger.module.ApplicationModule;
+import com.quaindinteractive.goodslist.view.activity.GoodsActivity;
 import com.quaindinteractive.goodslist.view.activity.MainActivity;
 
 import dagger.Component;
@@ -9,4 +10,5 @@ import dagger.Component;
 public interface ApplicationComponent {
 
     void inject(MainActivity mainActivity);
+    void inject(GoodsActivity goodsActivity);
 }
