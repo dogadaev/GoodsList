@@ -17,7 +17,7 @@ public class ProductModel {
     private static DatabaseHelper databaseHelper;
 
     public ProductModel(DatabaseHelper databaseHelper) {
-        this.databaseHelper = databaseHelper;
+        ProductModel.databaseHelper = databaseHelper;
     }
 
     public void loadProducts(LoadProductsCallback loadProductsCallback) {
@@ -153,7 +153,7 @@ public class ProductModel {
         protected Void doInBackground(ContentValues... params) {
             ContentValues cvUser = params[0];
             int id = params[1].getAsInteger(ProductsTable.COLUMN.ID);
-            databaseHelper.getWritableDatabase().update(ProductsTable.TABLE, cvUser, ProductsTable.COLUMN.ID +"="+id, null);
+            databaseHelper.getWritableDatabase().update(ProductsTable.TABLE, cvUser, ProductsTable.COLUMN.ID +"=" + id, null);
             return null;
         }
 
